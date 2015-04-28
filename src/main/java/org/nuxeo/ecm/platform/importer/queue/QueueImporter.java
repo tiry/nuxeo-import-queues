@@ -66,13 +66,16 @@ public class QueueImporter {
                 int idx = 0;
                 for (Consumer c : consumers) {
                     idx++;
-                    System.out.println("waiting for consumer to be completed " + idx + " to be completed :" + c.getNbProcessed());
+                    System.out.println("waiting for consumer "+ idx + " to be completed :" + c.getNbProcessed() + " -- " + c.getImmediateThroughput() + " docs/s -- " + c.getThroughput() + "docs/s");
                     terminated = terminated && c.isTerminated();
                 }
             }
         } catch (InterruptedException e) {
             log.error("Error while waiting for consumers", e);
         }
+
+        System.out.println("End of import process");
+
     }
 
 }

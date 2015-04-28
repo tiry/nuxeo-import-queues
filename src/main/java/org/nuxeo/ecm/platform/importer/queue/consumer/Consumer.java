@@ -8,6 +8,8 @@ public interface Consumer extends TaskRunner {
 
     public void canStop();
 
+    public double getImmediateThroughput();
 
+    public double getThroughput();
 
 }

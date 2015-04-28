@@ -28,6 +28,17 @@ public abstract class AbstractConsumer extends AbstractTaskRunner implements Con
 
     protected boolean started = false;
 
+    protected long startTime = 0;
+
+    protected long lastCheckTime = 0;
+
+    protected long lastCount = 0;
+
+    protected static final long CHECK_INTERVAL=2000;
+
+    protected double lastImediatThroughput=0;
+
+
     public AbstractConsumer(DocumentModel root, int batchSize, BlockingQueue<BlobHolder> queue) {
         repositoryName = root.getRepositoryName();
         this.batchSize = batchSize;
@@ -39,6 +50,8 @@ public abstract class AbstractConsumer extends AbstractTaskRunner implements Con
     public void run() {
 
         started=true;
+        startTime = System.currentTimeMillis();
+        lastCheckTime=startTime;
 
         UnrestrictedSessionRunner runner = new UnrestrictedSessionRunner(repositoryName) {
             @Override
@@ -83,6 +96,12 @@ public abstract class AbstractConsumer extends AbstractTaskRunner implements Con
     protected void commitIfNeeded(CoreSession session) {
         if (nbProcessed % batchSize == 0) {
             commit(session);
+            long t = System.currentTimeMillis();
+            if (t-lastCheckTime>CHECK_INTERVAL) {
+                lastImediatThroughput =1000*(nbProcessed - lastCount + 0.0)/ (t-lastCheckTime);
+                lastCount = nbProcessed;
+                lastCheckTime = t;
+            }
         }
     }
 
@@ -110,6 +129,16 @@ public abstract class AbstractConsumer extends AbstractTaskRunner implements Con
             return true;
         }
         return super.isTerminated();
+    }
+
+    @Override
+    public double getImmediateThroughput() {
+        return lastImediatThroughput;
+    }
+
+    @Override
+    public double getThroughput() {
+        return 1000*(nbProcessed+0.0) / (System.currentTimeMillis()+1-startTime);
     }
 
 }
