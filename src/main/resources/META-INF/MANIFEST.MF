@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: org.nuxeo.ecm.automation.scripting.blockly
+Nuxeo-WebModule: org.nuxeo.automation.scripting.blockly.BlocklyModule;
+ name=blockly;extends=base;package=org/nuxeo/automation/scripting/bloc
+ kly
+Bundle-Name: org.nuxeo.ecm.automation.scripting.blockly
+Bundle-ClassPath: .
+Bundle-ActivationPolicy: lazy
+Bundle-ManifestVersion: 2
+Bundle-Vendor: Nuxeo
+
